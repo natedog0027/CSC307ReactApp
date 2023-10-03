@@ -11,6 +11,7 @@ function TableHeader() {
       <tr>  {/* Tag given to make row in a table */}
         <th>Name</th>  {/* Tag given to make header in cell of a table */}
         <th>Job</th>
+		<th>Remove</th>
       </tr>
     </thead>
   );
@@ -24,6 +25,11 @@ function TableBody(props) {
 			<tr key={index}>
 				<td>{row.name}</td>
 				<td>{row.job}</td>
+				<td> 
+					<button onClick={() =>
+						props.removeCharacter(index)} > Delete
+					</button>
+				</td>
 			</tr>
 		);
 	}
@@ -40,7 +46,8 @@ function Table(props) {
   return (
     <table>
       <TableHeader />
-      <TableBody characterData={props.characterData}/>
+      <TableBody characterData={props.characterData}
+	  	removeCharacter={props.removeCharacter} />
     </table>
   );
 }

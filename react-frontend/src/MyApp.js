@@ -1,32 +1,42 @@
-import React from "react";
+import React, { useState } from "react";
 import Table from "./Table";
 
 
-const characters = [
-	{
-		name: "Charlie",
-		job: "Janitor",
-	},
-	{
-		name: "Mac",
-		job: "Bouncer",
-	},
-	{
-		name: "Dee",
-		job: "Aspiring Actress",
-	},
-	{
-		name: "Dennis",
-		job: "Bartender",
-	},
-];
 
 function MyApp() {
+	// This sets the starting state values as these 4 characters
+	const [characters, setCharacters] = useState([
+		{
+			name: "Charlie",
+			job: "Janitor",
+		},
+		{
+			name: "Mac",
+			job: "Bouncer",
+		},
+		{
+			name: "Dee",
+			job: "Aspiring Actress",
+		},
+		{
+			name: "Dennis",
+			job: "Bartender",
+		},
+	]);
+
+	function removeOneCharacter (index) {
+		const updated = characters.filter((character, i) => {
+			return i !== index
+		});
+		setCharacters(updated); 
+	}
+
   return (
     <div classname="container">
-      <Table characterData={characters} /> {/*Made a property "characterData"
-			where I am passing through the variable "characters". "characters" has
-			curly brackets because it is a js expression within an HTML element.*/}
+        <Table characterData={characters}
+	  		removeCharacter={removeOneCharacter} /> {
+			/*Made a property (prop) "characterData" where I am passing through the variable "characters".
+			"characters" has curly brackets because it is a js expression within an HTML element.*/}
     </div>
 
     /* Cannot make a second div because in each component you can only have one
