@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Table from "./Table";
+import Form from "./Form";
 
 
 function MyApp() {
@@ -15,13 +16,17 @@ function MyApp() {
 		setCharacters(updated); 
 	}
 
+	function updateList(person) {
+		setCharacters([...characters, person]);
+	}
+
   return (
     <div classname="container">
         <Table characterData={characters}
 	  		removeCharacter={removeOneCharacter} /> {
 			/*Made a property (prop) "characterData" where I am passing through the variable "characters".
 			"characters" has curly brackets because it is a js expression within an HTML element.*/}
-		<Form />	
+		<Form handleSubmit={updateList} />	
     </div>
 
     /* Cannot make a second div because in each component you can only have one
@@ -32,6 +37,7 @@ function MyApp() {
     */
   );
 }
+
 
 // Allows this component to be imported into other files or components
 export default MyApp; 
