@@ -1,5 +1,6 @@
-// Main file for backend. The equivalend in frontend is the index.js. Just renamed to reduce confusion
+// Main file for backend. The equivalent in frontend is the index.js. Just renamed to reduce confusion
 import express from "express";
+import cors from "cors";
 
 const app = express(); //Creates an instance of express called "app"
 const port = 8000; //Port number to listen to incoming http request
@@ -36,6 +37,7 @@ const users = {
     ]
  }
  
+app.use(cors()); //Opens this backend to any request (not secure, but for practice)
 app.use(express.json()); //Tells express to process incoming data in JSON format
 
 // Sets up the first API endpoint with GET functionality which is triggered with a "/" (the URL pattern that maps to this endpoint)
