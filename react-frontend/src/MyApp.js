@@ -17,8 +17,11 @@ function MyApp() {
 		setCharacters(updated); 
 	}
 
-	function updateList(person) {
-		setCharacters([...characters, person]);
+	function updateList(person){
+		makePostCall(person).then( result => {
+			if (result && result.status === 201) // Check if change (post) is acceptable(successful), only then add to new character into list 
+				setCharacters([...characters, person] );
+		});
 	}
 
 	// Call backend using axios and place response information (characters) into frontend table
@@ -61,6 +64,20 @@ async function fetchAll(){
 		return false;
 	}
 }
+
+// Move this function and the one above into MyApp() once they are functioning
+async function makePostCall(person){
+	try {
+		const response = await axios.post("http://localhost:8000/users", person);
+		return response; // After updating the list, return the new list
+	}
+	catch (error) {
+		console.log(error);
+		console.log("makePostCall function failed");
+		return false;
+	}
+}
+
 
 // Allows this component to be imported into other files or components
 export default MyApp; 
