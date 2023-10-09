@@ -31,6 +31,34 @@ function MyApp() {
 			setCharacters(result);
 		});
 	}, [] ); // This empty array tells react to only call this function once when the page is built. After, the info is manually updated
+	
+	/* Async indicates that other processes can run if this one is delayed. This is a function using axios to populate frontend
+	from backend table of characters. Used on setup. */
+	async function fetchAll(){
+		try {
+			const response = await axios.get("http://localhost:8000/users"); // await only works within async functions
+			return response.data.users_list;
+		}
+		catch (error){
+			//We're not handling errors, just logging the action into the console.
+			console.log(error);
+			console.log("fetchAll function failed");
+			return false;
+		}
+	}
+
+	// This function uses axios to post a character input to the backend from the frontend
+	async function makePostCall(person){
+		try {
+			const response = await axios.post("http://localhost:8000/users", person);
+			return response; // After updating the list, return the new list
+		}
+		catch (error) {
+			console.log(error);
+			console.log("makePostCall function failed");
+			return false;
+		}
+	}
 
   return (
     <div classname="container">
@@ -48,34 +76,6 @@ function MyApp() {
     </div>
     */
   );
-}
-
-/* Async indicates that other processes can run if this one is delayed. This is a function using axios to populate frontend
-from backend table of characters*/
-async function fetchAll(){
-	try {
-		const response = await axios.get("http://localhost:8000/users"); // await only works within async functions
-		return response.data.users_list;
-	}
-	catch (error){
-		//We're not handling errors, just logging the action into the console.
-		console.log(error);
-		console.log("fetchAll function failed");
-		return false;
-	}
-}
-
-// Move this function and the one above into MyApp() once they are functioning
-async function makePostCall(person){
-	try {
-		const response = await axios.post("http://localhost:8000/users", person);
-		return response; // After updating the list, return the new list
-	}
-	catch (error) {
-		console.log(error);
-		console.log("makePostCall function failed");
-		return false;
-	}
 }
 
 
