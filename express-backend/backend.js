@@ -77,6 +77,16 @@ function findUserById(id) {
     //return users['users_list'].filter( (user) => user['id'] === id);
 }
 
+app.post('/users', (req, res) => {
+    const userToAdd = req.body;
+    addUser(userToAdd);
+    res.status(200).end(); //200 is actually default response code, but this is to show how to alter response code
+});
+
+function addUser(user){
+    users['users_list'].push(user);
+}
+
 // This tells the backend server to listen for incoming http request on the assigned port number
 app.listen(port, () => {
     console.log("Example app listening at http://localhost:${port}");
