@@ -96,7 +96,7 @@ have to put information into a header, it auto-configures for JSON post argument
 app.post("/users", (req, res) => {
     const userToAdd = req.body;
     addUser(userToAdd);
-    res.status(200).end(); //200 is actually default response code, but this is to show how to alter response code
+    res.status(201).end(); //201 indicates that the posted item has been created
 });
 
 function addUser(user){
