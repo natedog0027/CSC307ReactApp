@@ -43,9 +43,17 @@ app.get("/", (req, res) => { // req and res are objects that allow us to process
     res.send("Hello World!!"); //This is the message we are sending back as response
 });
 
-// Find users by name query  http://localhost:8000/users?name=Mac
 app.get("/users", (req,res) => {
     const name = req.query.name;
+    const job = req.query.job;
+    // Find users by name and job query http://localhost:8000/users?name=Name
+    if (name != undefined && job != undefined){
+        let result = findUserByName(name);
+        result = findUserByJob(job);
+        result = {users_list: result}
+        res.send(result)
+    }
+    // Find users by name query http://localhost:8000/users?name=Name&job=Job
     if (name != undefined){
         let result = findUserByName(name);
         result = {users_list: result};
@@ -55,6 +63,14 @@ app.get("/users", (req,res) => {
         res.send(users);
     }
 })
+
+const findUserByName = (name) => {
+    return users["users_list"].filter( (user) => user["name"] === name);
+}
+
+const findUserByJob = (job) => {
+    return users["users_list"].filter( (user) => user["job"] === job);
+}
 
 // Can find users by user ID:  http://localhost:8000/users/zap555
 app.get("/users/:id", (req, res) => {
@@ -68,16 +84,15 @@ app.get("/users/:id", (req, res) => {
     }
 });
 
-const findUserByName = (name) => {
-    return users["users_list"].filter( (user) => user["name"] === name);
-}
-
 function findUserById(id) {
     return users['users_list'].find( (user) => user['id'] === id); // or line below
     //return users['users_list'].filter( (user) => user['id'] === id);
 }
 
-// Post doesn't work on Firefox Rested extension as of 10/9/23. Use Bing Boomerang extension instead
+/* When using post in Firefox Rested extension, you have to use a header to allow it to recognize JSON inputs.
+When posting, in header name put "Content-Type" and in header value put "application/json". In request body
+put the value in quotes and the name without quotes. If you use the Boomerang extension in Bing, you do not
+have to put information into a header, it auto-configures for JSON post arguments. */
 app.post("/users", (req, res) => {
     const userToAdd = req.body;
     addUser(userToAdd);
@@ -95,7 +110,7 @@ app.delete("/users/:id", (req, res) => {
 });
 
 function delUser(id){
-    let result = users["users_list"].filter( (user) => user["id"] !== id); // let is a rewritable variable
+    let result = users["users_list"].filter( (user) => user["id"] !== id); // let is a rewritable temporary variable
     users["users_list"] = result;
 }
 
