@@ -43,9 +43,39 @@ app.get("/", (req, res) => { // req and res are objects that allow us to process
     res.send("Hello World!!"); //This is the message we are sending back as response
 });
 
+// Find users by name query  http://localhost:8000/users?name=Mac
 app.get("/users", (req,res) => {
-    res.send(users);
+    const name = req.query.name;
+    if (name != undefined){
+        let result = findUserByName(name);
+        result = {users_list: result};
+        res.send(result);
+    }
+    else {
+        res.send(users);
+    }
 })
+
+// Can find users by user ID:  http://localhost:8000/users/zap555
+app.get('/users/:id', (req, res) => {
+    const id = req.params['id']; //or req.params.id
+    let result = findUserById(id);
+    if (result === undefined || result.length == 0)
+        res.status(404).send('Resource not found.');
+    else {
+        result = {users_list: result};
+        res.send(result);
+    }
+});
+
+const findUserByName = (name) => {
+    return users["users_list"].filter( (user) => user["name"] === name);
+}
+
+function findUserById(id) {
+    return users['users_list'].find( (user) => user['id'] === id); // or line below
+    //return users['users_list'].filter( (user) => user['id'] === id);
+}
 
 // This tells the backend server to listen for incoming http request on the assigned port number
 app.listen(port, () => {
