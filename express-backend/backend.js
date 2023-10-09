@@ -4,7 +4,7 @@ import express from "express";
 const app = express(); //Creates an instance of express called "app"
 const port = 8000; //Port number to listen to incoming http request
 
-// Users list in the form of a JSON object
+// Users list in the form of a JSON object (const is a constant global variable)
 const users = { 
     users_list :
     [
@@ -57,7 +57,7 @@ app.get("/users", (req,res) => {
 })
 
 // Can find users by user ID:  http://localhost:8000/users/zap555
-app.get('/users/:id', (req, res) => {
+app.get("/users/:id", (req, res) => {
     const id = req.params['id']; //or req.params.id
     let result = findUserById(id);
     if (result === undefined || result.length == 0)
@@ -77,7 +77,8 @@ function findUserById(id) {
     //return users['users_list'].filter( (user) => user['id'] === id);
 }
 
-app.post('/users', (req, res) => {
+// Post doesn't work on Firefox Rested extension as of 10/9/23. Use Bing Boomerang extension instead
+app.post("/users", (req, res) => {
     const userToAdd = req.body;
     addUser(userToAdd);
     res.status(200).end(); //200 is actually default response code, but this is to show how to alter response code
@@ -87,7 +88,18 @@ function addUser(user){
     users['users_list'].push(user);
 }
 
+app.delete("/users/:id", (req, res) => {
+    const userToDel = req.params.id;
+    delUser(userToDel);
+    res.status(204).end(); // 204 means request is processed (delete) but new data isn't shown until info is reloaded (get)
+});
+
+function delUser(id){
+    let result = users["users_list"].filter( (user) => user["id"] !== id); // let is a rewritable variable
+    users["users_list"] = result;
+}
+
 // This tells the backend server to listen for incoming http request on the assigned port number
 app.listen(port, () => {
-    console.log("Example app listening at http://localhost:${port}");
+    console.log(`Example app listening at http://localhost:${port}`); // Use backticks ` to make js fill in the variables {}
 });
