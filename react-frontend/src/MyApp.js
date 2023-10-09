@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, {useState, useEffect} from "react";
 import Table from "./Table";
 import Form from "./Form";
+import axios from "axios";
 
 
 function MyApp() {
@@ -20,6 +21,14 @@ function MyApp() {
 		setCharacters([...characters, person]);
 	}
 
+	// Call backend using axios and place response information (characters) into frontend table
+	useEffect(() => {
+		fetchAll().then( result => {
+			if (result)
+			setCharacters(result);
+		});
+	}, [] ); // This empty array tells react to only call this function once when the page is built. After, the info is manually updated
+
   return (
     <div classname="container">
         <Table characterData={characters}
@@ -38,6 +47,20 @@ function MyApp() {
   );
 }
 
+/* Async indicates that other processes can run if this one is delayed. This is a function using axios to populate frontend
+from backend table of characters*/
+async function fetchAll(){
+	try {
+		const response = await axios.get("http://localhost:8000/users"); // await only works within async functions
+		return response.data.users_list;
+	}
+	catch (error){
+		//We're not handling errors, just logging the action into the console.
+		console.log(error);
+		console.log("fetchAll function failed");
+		return false;
+	}
+}
 
 // Allows this component to be imported into other files or components
 export default MyApp; 
