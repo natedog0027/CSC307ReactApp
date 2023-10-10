@@ -96,7 +96,8 @@ When posting, in header name put "Content-Type" and in header value put "applica
 put the value in quotes and the name without quotes. If you use the Boomerang extension in Bing, you do not
 have to put information into a header, it auto-configures for JSON post arguments. */
 app.post("/users", (req, res) => {
-    const userToAdd = req.body;
+    let userToAdd = req.body;
+    userToAdd = generateID(userToAdd);
     addUser(userToAdd);
     res.status(201).end(); //201 indicates that the posted item has been created
 });
@@ -114,6 +115,24 @@ app.delete("/users/:id", (req, res) => {
 function delUser(id){
     let result = users["users_list"].filter( (user) => user["id"] !== id); // let is a rewritable temporary variable
     users["users_list"] = result;
+}
+
+// Generates a "random" number id for each new character
+function generateID(person){
+    let newID = Math.floor(Math.random() * 1000000); // Generate a random decimal number, mult by 10^5, floor is round down
+    newID = newID.toString();
+    let testID = findUserById(newID);
+    // If new id does not match any of the ones in the list, then is a good free id to use
+    if (testID == undefined){
+        console.log("hell yeah");
+        person.id = newID;
+        return person;
+    }
+    // Else, if test id does match, then try again and create another id
+    else {
+        console.log("NOT SICK!");
+        return generateID(person);
+    }
 }
 
 // This tells the backend server to listen for incoming http request on the assigned port number
