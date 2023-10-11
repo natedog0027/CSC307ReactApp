@@ -108,8 +108,16 @@ function addUser(user){
 
 app.delete("/users/:id", (req, res) => {
     const userToDel = req.params.id;
-    delUser(userToDel);
-    res.status(204).end(); // 204 means request is processed (delete) but new data isn't shown until info is reloaded (get)
+    let testID = findUserById(userToDel);
+    // If ID to delete does not match one of the ID's in the list, return a 404 code
+    if (testID == undefined){
+        res.status(404).end();
+    }
+    // Else, ID to delete does match a current character in the list, then delete the character
+    else {
+        delUser(userToDel);
+        res.status(204).end(); // 204 means request is processed (delete) but new data isn't shown until info is reloaded (get)
+    }
 });
 
 function delUser(id){
@@ -129,7 +137,7 @@ function generateID(person){
     }
     // Else, if test id does match, then try again and create another id
     else {
-        console.log("NOT SICK!");
+        console.log("Generated ID matches another ID, trying again");
         return generateID(person);
     }
 }
