@@ -2,16 +2,18 @@ import React, {useState, useEffect} from "react";
 import Table from "./Table";
 import Form from "./Form";
 import axios from "axios";
-
+// To view the console from the frontend, I have to cntrl-shift-i in browser to get to webdevtools-console
 
 function MyApp() {
 	// This sets the starting state values as these 4 characters
 	const [characters, setCharacters] = useState([]);
 
 	//Removes character when a "delete" button is pressed at the specified index
-	function removeOneCharacter (index) {
+	function removeOneCharacter (index, charID) {
 		//Uses a filter to recreate the entire table minus the removed character
+		//Also calls to the backend to remove character there as well
 		const updated = characters.filter((character, i) => {
+			makeDelCall(charID);
 			return i !== index
 		});
 		setCharacters(updated); 
@@ -19,8 +21,9 @@ function MyApp() {
 
 	function updateList(person){
 		makePostCall(person).then( result => {
+			console.log(result.data);
 			if (result && result.status === 201) // Check if change (post) is acceptable(successful), only then add to new character into list 
-				setCharacters([...characters, person] );
+				setCharacters([...characters, result.data] ); //Result.data is a response from the backend with the whole character
 		});
 	}
 
@@ -56,6 +59,18 @@ function MyApp() {
 		catch (error) {
 			console.log(error);
 			console.log("makePostCall function failed");
+			return false;
+		}
+	}
+
+	async function makeDelCall(personID){
+		try {
+			const response = await axios.delete(`http://localhost:8000/users/${personID}`);
+			return response; // After updating the list, return the new list
+		}
+		catch (error) {
+			console.log(error);
+			console.log("makeDelCall function failed");
 			return false;
 		}
 	}

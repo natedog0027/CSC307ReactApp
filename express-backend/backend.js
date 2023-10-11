@@ -99,7 +99,7 @@ app.post("/users", (req, res) => {
     let userToAdd = req.body;
     userToAdd = generateID(userToAdd);
     addUser(userToAdd);
-    res.status(201).end(); //201 indicates that the posted item has been created
+    res.status(201).send(userToAdd).end(); //201 indicates that the posted item has been created
 });
 
 function addUser(user){
@@ -124,7 +124,6 @@ function generateID(person){
     let testID = findUserById(newID);
     // If new id does not match any of the ones in the list, then is a good free id to use
     if (testID == undefined){
-        console.log("hell yeah");
         person.id = newID;
         return person;
     }
