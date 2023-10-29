@@ -1,4 +1,5 @@
 // Main file for backend. The equivalent in frontend is the index.js. Just renamed to reduce confusion
+// To open backend view in a browser, use: http://localhost:8000/users
 import express from "express";
 import cors from "cors";
 
