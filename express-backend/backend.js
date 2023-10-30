@@ -3,10 +3,12 @@
 import express from "express";
 import cors from "cors";
 
+import userServices from "./models/user-services";
+
 const app = express(); //Creates an instance of express called "app"
 const port = 8000; //Port number to listen to incoming http request
 
-// Users list in the form of a JSON object (const is a constant global variable)
+// Initial hardcoded users list in the form of a JSON object (const is a constant global variable)
 const users = { 
     users_list :
     [
