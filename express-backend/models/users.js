@@ -1,3 +1,5 @@
+// This is the Model of the MVC design pattern. It is the data structure that represents the data of the application
+
 import mongoose from "mongoose";
 
 

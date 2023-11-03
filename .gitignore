@@ -1,2 +1,3 @@
 # node_modules is a file for running npm locally, so it should be ignored by git
 node_modules
+backend.test.js

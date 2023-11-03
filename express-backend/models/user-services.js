@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import userModel from "./user.js";
+import userModel from "./users.js";
 
 // uncomment the following line to view mongoose debug messages
 mongoose.set("debug", true);
@@ -13,6 +13,8 @@ mongoose
   })
   .catch((error) => console.log(error));
 
+/* This function is used to get the list of users from the database. You can either request all items by not
+inputting anything into the name and job parameters, or request users by name and/or job */
 async function getUsers(name, job) {
   let result;
   if (name === undefined && job === undefined) {

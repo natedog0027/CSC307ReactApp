@@ -1,81 +1,58 @@
+// This is the Controller of the MVC design pattern. It is the logic that controls the data flow into the model and updates the view whenever data changes
+
 // Main file for backend. The equivalent in frontend is the index.js. Just renamed to reduce confusion
 // To open backend view in a browser, use: http://localhost:8000/users
 import express from "express";
 import cors from "cors";
 
-import userServices from "./models/user-services";
+import userServices from "./models/user-services.js";
 
 const app = express(); //Creates an instance of express called "app"
 const port = 8000; //Port number to listen to incoming http request
-
-// Initial hardcoded users list in the form of a JSON object (const is a constant global variable)
-const users = { 
-    users_list :
-    [
-       { 
-          id : 'xyz789',
-          name : 'Charlie',
-          job: 'Janitor',
-       },
-       {
-          id : 'abc123', 
-          name: 'Mac',
-          job: 'Bouncer',
-       },
-       {
-          id : 'ppp222', 
-          name: 'Mac',
-          job: 'Professor',
-       }, 
-       {
-          id: 'yat999', 
-          name: 'Dee',
-          job: 'Aspring actress',
-       },
-       {
-          id: 'zap555', 
-          name: 'Dennis',
-          job: 'Bartender',
-       }
-    ]
- }
  
 app.use(cors()); //Opens this backend to any request (not secure, but for practice)
 app.use(express.json()); //Tells express to process incoming data in JSON format
 
-// Sets up the first API endpoint with GET functionality which is triggered with a "/" (the URL pattern that maps to this endpoint)
-app.get("/", (req, res) => { // req and res are objects that allow us to process the request and response of the get funcition
+
+// Sets up an API endpoint with GET functionality which is triggered with a "/" (the URL pattern that maps to this endpoint)
+app.get("/", (req, res) => { // req and res are objects that allow us to process the request and response of the get function
     res.send("Hello World!!"); //This is the message we are sending back as response
 });
 
-app.get("/users", (req,res) => {
+/*/ Sets up API endpoint with GET functionality which is triggered with a "/users" (the URL pattern that maps to this endpoint).
+Gets a list of user documents form the MongoDB collection.
+Can get a list of all users:  http://localhost:8000/users
+Can find users by name:  http://localhost:8000/users?name=Name
+Can find users by job:  http://localhost:8000/users?job=Job
+Can find users by name and job:  http://localhost:8000/users?name=Name&job=Job
+*/
+app.get("/users", async (req,res) => { // Added async so that we can use await in the function
     const name = req.query.name;
     const job = req.query.job;
-    // Find users by name and job query http://localhost:8000/users?name=Name
-    if (name != undefined && job != undefined){
-        let result = findUserByName(name);
-        result = findUserByJob(job);
-        result = {users_list: result}
-        res.send(result)
+
+    // Find users in the MongoDB database
+    let result = await userServices.getUsers(name, job);  // Must await for the result to be returned from the database
+    // This for loop cycles through the returned list of users and prints them to the console
+    for (let people of result) {
+        console.log("Returned people from database collection: ");
+        console.log(people.name);
     }
-    // Find users by name query http://localhost:8000/users?name=Name&job=Job
-    if (name != undefined){
-        let result = findUserByName(name);
-        result = {users_list: result};
-        res.send(result);
-    }
-    else {
-        res.send(users);
-    }
+    console.log("Result from MongoDB: ");
+    console.log(result.name);
+
+    // This is old code from when we were using our own internal list of users
+
+    // // Find users by name and job query http://localhost:8000/users?name=Name
+    // if (name != undefined && job != undefined){
+    //     let result = findUserByName(name);
+    //     result = findUserByJob(job);
+    //     result = {users_list: result}
+    //     res.send(result)
+    // }
+    // else {
+    //     res.send(users);
+    // }
 })
-
-const findUserByName = (name) => {
-    return users["users_list"].filter( (user) => user["name"] === name);
-}
-
-const findUserByJob = (job) => {
-    return users["users_list"].filter( (user) => user["job"] === job);
-}
 
 // Can find users by user ID:  http://localhost:8000/users/zap555
 app.get("/users/:id", (req, res) => {
@@ -123,6 +100,11 @@ app.delete("/users/:id", (req, res) => {
     }
 });
 
+// This tells the backend server to listen for incoming http request on the assigned port number
+app.listen(port, () => {
+    console.log(`Example app listening at http://localhost:${port}`); // Use backticks ` to make js fill in the variables {}
+});
+
 function delUser(id){
     let result = users["users_list"].filter( (user) => user["id"] !== id); // let is a rewritable temporary variable
     users["users_list"] = result;
@@ -145,7 +127,4 @@ function generateID(person){
     }
 }
 
-// This tells the backend server to listen for incoming http request on the assigned port number
-app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`); // Use backticks ` to make js fill in the variables {}
-});
+// exports.app = app; // This line is needed for the unit tests to work
