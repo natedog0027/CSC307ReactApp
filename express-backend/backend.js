@@ -32,29 +32,46 @@ Can find users by name and job:  http://localhost:8000/users?name=Name&job=Job
 app.get("/users", async (req,res) => { // Added async so that we can use await in the function
     const name = req.query.name;
     const job = req.query.job;
-    let result = await userServices.getUsers(name, job);  // Must await for the result to be returned from the database
+  
+    try{
+        let result = await userServices.getUsers(name, job);  // Must await for the result to be returned from the database
 
-    // Check if returned result is an empty array, if so, then return a 404 error
-    if (Array.isArray(result) && result.length === 0) {
-        res.status(404).send('Damn. Resource not found.');
+        // Check if returned result is an empty array, if so, then return a 404 error
+        if (Array.isArray(result) && result.length === 0) {
+            res.status(404).send('Damn. Resource not found.');
+        }
+        else{        
+            // If result is not an empty array, then return the result to the frontend
+            result = {users_list: result};
+            res.send(result);
+        }
     }
-    else{        
-        // If result is not an empty array, then return the result to the frontend
-        result = {users_list: result};
-        res.send(result);
+    catch (error){
+        console.log(error);
+        res.status(500).send("Internal Server Error");
     }
 })
 
-// Can find users by user ID:  http://localhost:8000/users/zap555
-app.get("/users/:id", (req, res) => {
+// Can find users from MongoDB by user ID:  http://localhost:8000/users/ID
+app.get("/users/:id", async (req, res) => {
     const id = req.params['id']; //or req.params.id
-    let result = findUserById(id);
-    if (result === undefined || result.length == 0)
-        res.status(404).send('Resource not found.');
-    else {
-        result = {users_list: result};
-        res.send(result);
+
+    try{
+        let result = await userServices.findUserById(id);
+        // Check if returned result is an empty array, if so, then return a 404 error
+        if (result === undefined || result.length == 0) {
+            res.status(404).send('Damn. Resource not found.');
+        }
+        else{        
+            // If result is not an empty array, then return the result to the frontend
+            result = {users_list: result};
+            res.send(result);
+        }
     }
+    catch (error){
+        console.log(error);
+        res.status(500).send("Internal Server Error");
+    }    
 });
 
 function findUserById(id) {
