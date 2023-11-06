@@ -7,6 +7,10 @@ import cors from "cors";
 
 import userServices from "./models/user-services.js";
 
+const users = { 
+    users_list :[]
+ }
+
 const app = express(); //Creates an instance of express called "app"
 const port = 8000; //Port number to listen to incoming http request
  
@@ -20,7 +24,7 @@ app.get("/", (req, res) => { // req and res are objects that allow us to process
 });
 
 /*/ Sets up API endpoint with GET functionality which is triggered with a "/users" (the URL pattern that maps to this endpoint).
-Gets a list of user documents form the MongoDB collection.
+Gets a list of user documents from the MongoDB collection.
 Can get a list of all users:  http://localhost:8000/users
 Can find users by name:  http://localhost:8000/users?name=Name
 Can find users by job:  http://localhost:8000/users?job=Job
@@ -29,29 +33,17 @@ Can find users by name and job:  http://localhost:8000/users?name=Name&job=Job
 app.get("/users", async (req,res) => { // Added async so that we can use await in the function
     const name = req.query.name;
     const job = req.query.job;
-
-    // Find users in the MongoDB database
     let result = await userServices.getUsers(name, job);  // Must await for the result to be returned from the database
-    // This for loop cycles through the returned list of users and prints them to the console
-    for (let people of result) {
-        console.log("Returned people from database collection: ");
-        console.log(people.name);
+
+    // Check if returned result is an empty array, if so, then return a 404 error
+    if (Array.isArray(result) && result.length === 0) {
+        res.status(404).send('Damn. Resource not found.');
     }
-    console.log("Result from MongoDB: ");
-    console.log(result.name);
-
-    // This is old code from when we were using our own internal list of users
-
-    // // Find users by name and job query http://localhost:8000/users?name=Name
-    // if (name != undefined && job != undefined){
-    //     let result = findUserByName(name);
-    //     result = findUserByJob(job);
-    //     result = {users_list: result}
-    //     res.send(result)
-    // }
-    // else {
-    //     res.send(users);
-    // }
+    else{        
+        // This for loop cycles through the returned list of users and prints them to the console 
+        result = {users_list: result};
+        res.send(result);
+    }
 })
 
 // Can find users by user ID:  http://localhost:8000/users/zap555
