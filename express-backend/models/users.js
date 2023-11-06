@@ -2,7 +2,6 @@
 
 import mongoose from "mongoose";
 
-
 // Sets up the users schema, which is the mongo database document framework for the list of users documents
 const UserSchema = new mongoose.Schema(
   {

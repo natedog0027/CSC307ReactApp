@@ -1,7 +1,6 @@
 // This is the Controller of the MVC design pattern. It is the logic that controls the data flow into the model and updates the view whenever data changes
 
 // Main file for backend. The equivalent in frontend is the index.js. Just renamed to reduce confusion
-// To open backend view in a browser, use: http://localhost:8000/users
 import express from "express";
 import cors from "cors";
 
@@ -40,7 +39,7 @@ app.get("/users", async (req,res) => { // Added async so that we can use await i
         res.status(404).send('Damn. Resource not found.');
     }
     else{        
-        // This for loop cycles through the returned list of users and prints them to the console 
+        // If result is not an empty array, then return the result to the frontend
         result = {users_list: result};
         res.send(result);
     }
