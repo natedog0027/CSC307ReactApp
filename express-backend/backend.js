@@ -74,11 +74,6 @@ app.get("/users/:id", async (req, res) => {
     }    
 });
 
-function findUserById(id) {
-    return users['users_list'].find( (user) => user['id'] === id); // or line below
-    //return users['users_list'].filter( (user) => user['id'] === id);
-}
-
 /* When using post in Firefox Rested extension, you have to use a header to allow it to recognize JSON inputs.
 When posting, in header name put "Content-Type" and in header value put "application/json". In request body
 put the value in quotes and the name without quotes. If you use the Boomerang extension in Bing, you do not
@@ -97,15 +92,13 @@ app.post("/users", async (req, res) => {
 
 app.delete("/users/:id", (req, res) => {
     const userToDel = req.params.id;
-    let testID = findUserById(userToDel);
-    // If ID to delete does not match one of the ID's in the list, return a 404 code
-    if (testID == undefined){
-        res.status(404).end();
+
+    let result = userServices.deleteUser(userToDel);
+
+    if (result === false){
+        res.status(500).send("Internal Server Error");
     }
-    // Else, ID to delete does match a current character in the list, then delete the character
-    else {
-        delUser(userToDel);
-        res.status(204).end(); // 204 means request is processed (delete) but new data isn't shown until info is reloaded (get)
+    else { res.status(201).send(userToDel).end(); //201 indicates that the posted item has been created
     }
 });
 

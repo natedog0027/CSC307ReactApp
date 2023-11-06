@@ -5,14 +5,14 @@ import axios from "axios";
 // To view the console from the frontend, I have to cntrl-shift-i in browser to get to webdevtools-console
 
 function MyApp() {
-	// This sets the starting state values as these 4 characters
+	// This sets the starting state values as an empty list
 	const [characters, setCharacters] = useState([]);
 
 	//Removes character when a "delete" button is pressed at the specified index
 	function removeOneCharacter (index, charID) {
-		//Uses a filter to recreate the entire table minus the removed character
+		//Uses a filter to recreate the entire table minus the removed character in the frontend
 		//Also calls to the backend to remove character there as well
-		const updated = characters.filter((character, i) => {
+		const updated = characters.filter((character, i) =>{
 			makeDelCall(charID);
 			return i !== index
 		});
